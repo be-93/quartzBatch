@@ -12,9 +12,8 @@ public class ApiResponse {
 
 	private String timeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 	private String message; // 예외 메세지
-	private String code; // 커스텀 오류 코드
-	private Boolean success;
 	private int status; // HTTP 상태값
+	private Boolean success;
 
 	public ApiResponse(Boolean success, String message) {
 		this.success = success;
@@ -23,11 +22,6 @@ public class ApiResponse {
 
 	static public ApiResponse create() {
 		return new ApiResponse(true , "");
-	}
-
-	public ApiResponse code(String code) {
-		this.code = code;
-		return this;
 	}
 
 	public ApiResponse status(int status) {
