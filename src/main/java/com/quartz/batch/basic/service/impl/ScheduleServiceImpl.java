@@ -2,7 +2,6 @@ package com.quartz.batch.basic.service.impl;
 
 import com.quartz.batch.basic.dto.scheduler.JobRequest;
 import com.quartz.batch.basic.dto.scheduler.JobResponse;
-import com.quartz.batch.basic.dto.scheduler.StatusResponse;
 import com.quartz.batch.basic.service.ScheduleService;
 import com.quartz.batch.utils.DateTimeUtils;
 import com.quartz.batch.utils.JobUtils;
@@ -113,61 +112,35 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public StatusResponse getAllJobs() {
-        JobResponse jobResponse;
-        StatusResponse statusResponse = new StatusResponse();
+    public List<JobResponse> findAllJobs() {
+
         List<JobResponse> jobs = new ArrayList<>();
-        int numOfRunningJobs = 0;
-        int numOfGroups = 0;
-        int numOfAllJobs = 0;
 
         try {
             Scheduler scheduler = schedulerFactoryBean.getScheduler();
             for (String groupName : scheduler.getJobGroupNames()) {
-                numOfGroups++;
+
                 for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
                     List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
 
-                    if(triggers.get(0) instanceof CronTrigger){
-                        CronTrigger cronTrigger = (CronTrigger)triggers.get(0);
-                        jobResponse = JobResponse.builder()
-                                .jobName(jobKey.getName())
-                                .groupName(jobKey.getGroup())
-                                .scheduleTime(DateTimeUtils.toString(triggers.get(0).getStartTime()))
-                                .lastFiredTime(DateTimeUtils.toString(triggers.get(0).getPreviousFireTime()))
-                                .nextFireTime(DateTimeUtils.toString(triggers.get(0).getNextFireTime()))
-                                .cronExpression(cronTrigger.getCronExpression())
-                                .build();
-                    }else{
-                        jobResponse = JobResponse.builder()
-                                .jobName(jobKey.getName())
-                                .groupName(jobKey.getGroup())
-                                .scheduleTime(DateTimeUtils.toString(triggers.get(0).getStartTime()))
-                                .lastFiredTime(DateTimeUtils.toString(triggers.get(0).getPreviousFireTime()))
-                                .nextFireTime(DateTimeUtils.toString(triggers.get(0).getNextFireTime()))
-                                .build();
-                    }
+                    CronTrigger cronTrigger = (CronTrigger)triggers.get(0);
+                    JobResponse jobResponse = JobResponse.builder()
+                            .jobName(jobKey.getName())
+                            .groupName(jobKey.getGroup())
+                            .scheduleTime(DateTimeUtils.toString(triggers.get(0).getStartTime()))
+                            .lastFiredTime(DateTimeUtils.toString(triggers.get(0).getPreviousFireTime()))
+                            .nextFireTime(DateTimeUtils.toString(triggers.get(0).getNextFireTime()))
+                            .cronExpression(cronTrigger.getCronExpression())
+                            .build();
 
-                    if (isJobRunning(jobKey)) {
-                        jobResponse.setJobStatus("RUNNING");
-                        numOfRunningJobs++;
-                    } else {
-                        String jobState = getJobState(jobKey);
-                        jobResponse.setJobStatus(jobState);
-                    }
-                    numOfAllJobs++;
                     jobs.add(jobResponse);
                 }
             }
         } catch (SchedulerException e) {
-            log.error("[schedulerdebug] error while fetching all job info", e);
+            log.error("[error] findAllJobs : Job 전체 조회중 오류 ", e);
         }
 
-        statusResponse.setNumOfAllJobs(numOfAllJobs);
-        statusResponse.setNumOfRunningJobs(numOfRunningJobs);
-        statusResponse.setNumOfGroups(numOfGroups);
-        statusResponse.setJobs(jobs);
-        return statusResponse;
+        return jobs;
     }
 
     @Override

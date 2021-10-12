@@ -1,12 +1,14 @@
 package com.quartz.batch.basic.service;
 
 import com.quartz.batch.basic.dto.scheduler.JobRequest;
-import com.quartz.batch.basic.dto.scheduler.StatusResponse;
+import com.quartz.batch.basic.dto.scheduler.JobResponse;
 import org.quartz.Job;
 import org.quartz.JobKey;
 
+import java.util.List;
+
 public interface ScheduleService {
-    StatusResponse getAllJobs();
+    List<JobResponse> findAllJobs();
 
     boolean isJobRunning(JobKey jobKey);
 

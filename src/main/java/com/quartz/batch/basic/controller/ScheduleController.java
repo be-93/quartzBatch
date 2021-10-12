@@ -2,7 +2,7 @@ package com.quartz.batch.basic.controller;
 
 import com.quartz.batch.basic.dto.scheduler.ApiResponse;
 import com.quartz.batch.basic.dto.scheduler.JobRequest;
-import com.quartz.batch.basic.dto.scheduler.StatusResponse;
+import com.quartz.batch.basic.dto.scheduler.JobResponse;
 import com.quartz.batch.basic.job.CronJob;
 import com.quartz.batch.basic.service.ScheduleService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -22,11 +24,8 @@ public class ScheduleController {
 
     @RequestMapping(value = "/addJob", method = RequestMethod.POST)
     public ResponseEntity<?> addScheduleJob(@ModelAttribute JobRequest jobRequest) {
-        log.debug("add schedule job :: jobRequest : {}", jobRequest);
-        if (jobRequest.getJobName() == null) {
-            return new ResponseEntity<>(new ApiResponse(false, "Require jobName"),
-                    HttpStatus.BAD_REQUEST);
-        }
+
+        scheduleService.addJob(jobRequest, CronJob.class);
 
         JobKey jobKey = new JobKey(jobRequest.getJobName(), jobRequest.getJobGroup());
         if (!scheduleService.isJobExists(jobKey)) {
@@ -34,7 +33,7 @@ public class ScheduleController {
                 return new ResponseEntity<>(new ApiResponse(false, "not found cron"),
                         HttpStatus.BAD_REQUEST);
             } else {
-                scheduleService.addJob(jobRequest, CronJob.class);
+
             }
         } else {
             return new ResponseEntity<>(new ApiResponse(false, "Job already exits"),
@@ -77,8 +76,8 @@ public class ScheduleController {
     }
 
     @RequestMapping(value = "/jobs", method = RequestMethod.GET)
-    public StatusResponse getAllJobs() {
-        return scheduleService.getAllJobs();
+    public List<JobResponse> findAllJobs() {
+        return scheduleService.findAllJobs();
     }
 
     @RequestMapping(value = "/pauseJob", method = RequestMethod.PUT)
