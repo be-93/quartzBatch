@@ -20,29 +20,18 @@ public enum ErrorCode {
         429 : Too Many Requests
         500 : 서버 에러
     */
-    SUCCESS(200, "200", "success" )
-    , BAD_REQUEST(401,"401","BAD_REQUEST")
-    , SYSTEM_ERROR(500 , "500", "SYSTEM_ERROR")
-    , SIGN_PRI_NOT_FOUND(400 , "H001", "[SIGN_PRI_NOT_FOUND] 공인인증서 signPri.key 파일은 필수입니다.")
-    , SIGN_CERT_NOT_FOUND(400 , "H002", "[SIGN_CERT_NOT_FOUND] 공인인증서 signCert.key 파일은 필수입니다.")
-    , PASSWORD_NOT_FOUND(400 , "H003", "[PASSWORD_NOT_FOUND] 공인인증서 패스워드는 필수입니다.")
-    , SIGN_PRI_EXTENSION_ERROR(400 , "H004", "[SIGN_PRI_EXTENSION_ERROR] 공인인증서 signPir 파일의 확장자가 잘못되었습니다.")
-    , SIGN_CERT_EXTENSION_ERROR(400 , "H005", "[SIGN_CERT_EXTENSION_ERROR] 공인인증서 signCert 파일의 확장자가 잘못되었습니다..")
-    , PASSWORD_ERROR(400 , "H006", "[PASSWORD_ERROR] 패스워드 검증 오류가 발생하였습니다.")
-    , LOGIN_ERROR(400 , "H007", "[LOGIN_ERROR] 로그인 과정중 오류가 발생하였습니다.")
-    , DECR_ERROR(400 , "H008", "[FILE_DECR_ERROR] 복호화 과정중 오류가 발생하였습니다.")
-    , SEARCH_START_DATE(400 , "H009", "[SEARCH_START_DATE] 조회 시작일은 필수값입니다.")
-    , SEARCH_END_DATE(400 , "H010", "[SEARCH_END_DATE] 조회 종료일은 필수값입니다.")
+    SUCCESS(200,  "success" )
+    , NOT_EXIST_JOB(400, "요청하신 JOB 은 존재하지 않습니다.")
+    , EXIST_JOB_NAME(400, "요청하신 JOB 명칭은 중복됩니다.")
+    , BAD_REQUEST(401,"BAD_REQUEST")
+    , SYSTEM_ERROR(500 , "SYSTEM_ERROR")
     ;
 
-    private String message;
-    private String code;
     private int status;
+    private String message;
 
-    private ErrorCode(int states , String code, String message) {
-        this.code = code;
+    ErrorCode(int status, String message) {
+        this.status = status;
         this.message = message;
-        this.status = states;
     }
-
 }
