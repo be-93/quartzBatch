@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @Slf4j
@@ -21,6 +20,11 @@ public class ScheduleController {
 
     @Autowired
     private ScheduleService scheduleService;
+
+    @RequestMapping(value = "/jobs", method = RequestMethod.GET)
+    public List<JobResponse> findAllJobs() {
+        return scheduleService.findAllJobs();
+    }
 
     @RequestMapping(value = "/addJob", method = RequestMethod.POST)
     public ResponseEntity<?> addScheduleJob(@ModelAttribute JobRequest jobRequest) {
@@ -73,11 +77,6 @@ public class ScheduleController {
                     HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(new ApiResponse(true, "수정 성공"), HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/jobs", method = RequestMethod.GET)
-    public List<JobResponse> findAllJobs() {
-        return scheduleService.findAllJobs();
     }
 
     @RequestMapping(value = "/pauseJob", method = RequestMethod.PUT)
